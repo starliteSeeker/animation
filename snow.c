@@ -7,6 +7,7 @@ typedef struct _snow
 {
     // fixed point Q24.8
     int y, x;
+    int dy, dx;
     unsigned int vy, vx;
     struct _snow *next;
 } Snow;
@@ -43,8 +44,16 @@ void snow()
         while (curr != NULL)
         {
             Snow *next = curr->next;
-            curr->x -= curr->vx;
-            curr->y += curr->vy;
+            curr->dx += curr->vx;
+            curr->dy += curr->vy;
+            // only update x when y is updated
+            if (curr->dy >> 8 > 0)
+            {
+                curr->y += curr->dy & (~0xff);
+                curr->dy &= 0xff;
+                curr->x -= curr->dx & (~0xff);
+                curr->dx &= 0xff;
+            }
 
             if (curr->x < 0 || curr->y >> 8 >= LINES)
             {
@@ -68,13 +77,15 @@ void snow()
 
         // create new snow
         snowCounter += COLS + LINES / 2;
-        while (snowCounter >= 100)
+        while (snowCounter >= 150)
         {
-            snowCounter -= 100;
+            snowCounter -= 150;
             Snow *next = malloc(sizeof(Snow));
 
             next->x = (rand() % (COLS + LINES / 2)) << 8;
             next->y = 0 << 8;
+            next->dx = 0;
+            next->dy = 0;
             next->vx = (0b1100000) + rand() % 0b100000;
             next->vy = (1 << 7) + rand() % 0b110000;
             next->next = head;
