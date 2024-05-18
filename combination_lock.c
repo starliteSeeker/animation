@@ -109,7 +109,7 @@ void combination_lock(int size)
     initscr();
     noecho();
     cbreak();
-    curs_set(0);
+    int prev_curs = curs_set(0);
     refresh();
 
     char msg[] = " wasd to move, q to quit";
@@ -118,6 +118,7 @@ void combination_lock(int size)
     // calculate positioning
     if (LINES <= FONT_HEIGHT + 2 || COLS < size * (FONT_WIDTH + 1) + 1 || COLS < sizeof(msg_win))
     {
+        curs_set(prev_curs);
         endwin();
         printf("terminal too small\n");
         return;
@@ -240,6 +241,7 @@ void combination_lock(int size)
 
     free(lockNumber);
     free(lock);
+    curs_set(prev_curs);
     endwin();
 }
 

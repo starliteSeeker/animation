@@ -17,7 +17,7 @@ void snow()
     initscr();
     noecho();
     cbreak();
-    curs_set(0);
+    int prev_curs = curs_set(0);
     timeout(40); // timeout for getch()
 
     srand(time(NULL));
@@ -111,5 +111,6 @@ void snow()
         curr = next;
     }
 
+    curs_set(prev_curs);
     endwin();
 }

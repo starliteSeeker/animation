@@ -7,7 +7,7 @@ void bounce()
     initscr();
     noecho();
     cbreak();
-    curs_set(0);
+    int prev_curs = curs_set(0);
     timeout(50); // timeout for getch()
 
     int x = COLS / 2;
@@ -37,5 +37,6 @@ void bounce()
         refresh();
     }
 
+    curs_set(prev_curs);
     endwin();
 }

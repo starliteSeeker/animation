@@ -18,7 +18,7 @@ void ripple(void)
     initscr();
     noecho();
     cbreak();
-    curs_set(0);
+    int prev_curs = curs_set(0);
     timeout(0);
     keypad(stdscr, true);
     mousemask(BUTTON1_PRESSED, NULL);
@@ -106,6 +106,7 @@ void ripple(void)
         free(curr);
         curr = temp;
     }
+    curs_set(prev_curs);
     endwin();
 }
 
