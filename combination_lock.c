@@ -145,12 +145,6 @@ void combination_lock(int size)
     mvaddstr(LINES - 1, 0, msg);
     refresh();
 
-    for (int i = 0; i < size; i++)
-    {
-        mvaddch(0, i, '0' + lockAnswer[i]);
-    }
-    refresh();
-
     bool quitFlag = false;
     int ch;
     while (memcmp(lockAnswer, lockNumber, size) != 0)
