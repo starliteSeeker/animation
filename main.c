@@ -1,5 +1,6 @@
 #include "bounce.h"
 #include "combination_lock.h"
+#include "ripple.h"
 #include "snow.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,6 +31,10 @@ int main(int argc, char **argv)
             size = atoi(argv[2]);
         combination_lock(size);
     }
+    else if (strcmp(argv[1], "ripple") == 0)
+    {
+        ripple();
+    }
     else
     {
         printHelp(argv[0]);
@@ -44,4 +49,5 @@ void printHelp(char *name)
     printf("bounce\n");
     printf("snow\n");
     printf("combination_lock [size=3]\n");
+    printf("ripple\n");
 }

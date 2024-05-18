@@ -2,7 +2,7 @@ GCC = gcc -Wall
 LDFLAGS = -lncurses
 EXE = animation.out
 
-SRCS = main.c bounce.c snow.c combination_lock.c
+SRCS = main.c bounce.c snow.c combination_lock.c ripple.c
 OBJS = $(SRCS:%.c=%.o)
 
 .c.o: 
