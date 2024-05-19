@@ -4,14 +4,18 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#define BUF_CAP 40
+
 typedef struct _ripple
 {
+    bool enabled;
     int y, x; // center
     int dist; // dist from center
-    struct _ripple *next;
 } Ripple;
 
 void draw(Ripple *r, char c);
+
+Ripple arr[BUF_CAP] = {0};
 
 void ripple(void)
 {
@@ -19,14 +23,16 @@ void ripple(void)
     noecho();
     cbreak();
     int prev_curs = curs_set(0);
-    timeout(0);
+    nodelay(stdscr, true);
     keypad(stdscr, true);
-    mousemask(BUTTON1_PRESSED, NULL);
+    mouseinterval(0);
+    // all mouse event is needed or else animation gets stuck
+    mousemask(ALL_MOUSE_EVENTS, NULL);
     refresh();
 
-    mvaddstr(5, 10, "qwewq");
+    mvaddstr(0, 0, "click on terminal");
+    mvaddstr(1, 0, "any key to quit");
 
-    Ripple *head = NULL;
     MEVENT event;
     int ch;
     bool quitFlag = false;
@@ -42,16 +48,22 @@ void ripple(void)
                 {
                     if (event.bstate & BUTTON1_PRESSED)
                     {
-                        Ripple *temp = malloc(sizeof(Ripple));
-                        temp->y = event.y;
-                        temp->x = event.x;
-                        temp->dist = 0;
-                        temp->next = head;
-                        head = temp;
+                        int i;
+                        for (i = 0; i < BUF_CAP; i++)
+                        {
+                            if (!arr[i].enabled)
+                            {
+                                arr[i].y = event.y;
+                                arr[i].x = event.x;
+                                arr[i].dist = 0;
+                                arr[i].enabled = true;
+                                break;
+                            }
+                        }
                     }
                 }
                 break;
-            case 'q':
+            default:
                 quitFlag = true;
                 break;
             }
@@ -60,52 +72,32 @@ void ripple(void)
             break;
 
         // erase previous ripples
-        Ripple *curr = head;
-        while (curr != NULL)
+        for (int i = 0; i < BUF_CAP; i++)
         {
-            draw(curr, ' ');
-            curr = curr->next;
+            if (arr[i].enabled)
+                draw(arr + i, ' ');
         }
-        curr = head;
-        Ripple *prev = NULL;
-        while (curr != NULL)
+        for (int i = 0; i < BUF_CAP; i++)
         {
-            if (curr->dist > LINES + COLS)
+            if (!arr[i].enabled)
+                continue;
+
+            if (arr[i].dist > LINES + COLS)
             {
                 // delete curr
-                if (prev == NULL)
-                {
-                    head = curr->next;
-                    free(curr);
-                    curr = head;
-                }
-                else
-                {
-                    prev->next = curr->next;
-                    free(curr);
-                    curr = prev->next;
-                }
+                arr[i].enabled = false;
             }
             else
             {
                 // draw curr
-                curr->dist++;
-                draw(curr, '*');
-                prev = curr;
-                curr = curr->next;
+                arr[i].dist++;
+                draw(arr + i, '*');
             }
         }
-
+        refresh();
         usleep(50000);
     }
 
-    Ripple *curr = head;
-    while (curr != NULL)
-    {
-        Ripple *temp = curr->next;
-        free(curr);
-        curr = temp;
-    }
     curs_set(prev_curs);
     endwin();
 }
@@ -140,5 +132,4 @@ void draw(Ripple *r, char c)
             x4--;
         }
     }
-    refresh();
 }
