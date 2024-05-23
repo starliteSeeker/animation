@@ -1,4 +1,5 @@
 #include "bounce.h"
+#include "coin.h"
 #include "combination_lock.h"
 #include "ripple.h"
 #include "snow.h"
@@ -34,6 +35,10 @@ int main(int argc, char **argv)
     else if (strcmp(argv[1], "ripple") == 0)
     {
         ripple();
+    }
+    else if (strcmp(argv[1], "coin") == 0)
+    {
+        coin();
     }
     else
     {
