@@ -1,6 +1,7 @@
 #include "bounce.h"
 #include "coin.h"
 #include "combination_lock.h"
+#include "cube.h"
 #include "ripple.h"
 #include "snow.h"
 #include <stdio.h>
@@ -40,6 +41,10 @@ int main(int argc, char **argv)
     {
         coin();
     }
+    else if (strcmp(argv[1], "cube") == 0)
+    {
+        cube();
+    }
     else
     {
         printHelp(argv[0]);
@@ -55,4 +60,6 @@ void printHelp(char *name)
     printf("snow\n");
     printf("combination_lock [size=3]\n");
     printf("ripple\n");
+    printf("coin\n");
+    printf("cube\n");
 }
